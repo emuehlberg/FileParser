@@ -155,11 +155,12 @@ public class Main implements ActionListener
 			{
 				for(Doc d:filelist)
 				{
-					if(d.getFilename().contentEquals(fc.getSelectedFile().getAbsolutePath()))
+					if(d.getFilename().contentEquals(fc.getSelectedFile().getName()))
 					{
 						filelist.remove(d);
-						parseDoc(fc.getSelectedFile().getAbsolutePath());
+						filelist.add(parseDoc(fc.getSelectedFile().getAbsolutePath()));
 						UpdateSessionFile();
+						UpdateTable();
 						return;
 					}
 				}
@@ -199,17 +200,17 @@ public class Main implements ActionListener
 	
 	public static void reloadFiles()
 	{
-		Stack<String> st = new Stack<String>();
+		LinkedList<String> fp = new LinkedList<String>();
 		for(Doc d:filelist)
 		{
-			st.push(d.getFilepath());
+			 fp.add(d.getFilepath());
 		}
 		filelist.clear();
-		while(!st.empty())
+		for(String s:fp)
 		{
-			parseDoc(st.pop());
+			filelist.add(parseDoc(s));
 		}
-		UpdateTable();
+
 	}
 	
 	public static void UpdateSessionFile()
@@ -224,7 +225,7 @@ public class Main implements ActionListener
 						Integer.toString(d.getWordCount())+","+
 						Integer.toString(d.getLineCount())+"\n");
 			}
-			pw.close();	
+			pw.close();
 		}
 		catch(IOException e)
 		{
@@ -252,6 +253,7 @@ public class Main implements ActionListener
 			}
 			br.close();
 			reloadFiles();
+			UpdateTable();
 		}
 		catch (IOException e)
 		{
